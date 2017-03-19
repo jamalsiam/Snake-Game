@@ -1,0 +1,67 @@
+<html>
+<head>
+
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+ <style> body {padding: 10; margin: 10;} </style>
+</head>
+
+<body>
+
+  Goal:<br>
+  <input type="text" id="Goal"><br>
+  Max:<br>
+  <input type="text" id="Max">
+  <button  onclick="trys(document.getElementById('Goal').value*1,document.getElementById('Max').value*1,1)">try</button>
+  <p id='menu'></p>
+
+  <button onclick="$('#menu')[0].innerHTML='SOLVED: '+JSON.stringify(his.solved[$('#Goal')[0].value])">Solved</button>
+  <button onclick="$('#menu')[0].innerHTML='FAILED: '+JSON.stringify(his.failed[$('#Goal')[0].value])">Failed</button>
+
+  <ul id='res'></ul>
+</body>
+  <script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+<script type="text/javascript">
+	var arr = [0,1,2,3,4,5,6,7,8,9,10]
+	var his={solved:{},failed:{}}
+
+var trys = function(goal,max,again){
+	if (max && max!==arr.length-1){
+		arr=[];
+		for (var i = 0; i < max+1; i++) {
+			arr.push(i);
+		}
+	}
+	his.solved[goal]===undefined ? his.solved[goal]=[] : null;
+	if (his.solved[goal].length!==0 && !again){
+		return his.solved[goal]
+	} 
+	his.failed[goal]===undefined ? his.failed[goal]=[] : null;
+	var a=Math.floor(Math.random()*(arr.length+1))+1;
+	var b=Math.floor(Math.random()*(arr.length+1))+1;
+	var jgoals=JSON.stringify(his.solved[goal])
+	var jgoalf=JSON.stringify(his.failed[goal])
+	var jrand=JSON.stringify([a,b])
+	var jrandr=JSON.stringify([b,a])
+	while(jgoalf.includes(jrand) || jgoalf.includes(jrandr)){
+		a=Math.floor(Math.random()*(arr.length+1))+1;
+		b=Math.floor(Math.random()*(arr.length+1))+1;
+		jgoalf=JSON.stringify(his.failed[goal])
+		jrand=JSON.stringify([a,b])
+		jrandr=JSON.stringify([b,a])
+	}	
+	if (arr[a]*arr[b] === goal){
+		if (!jgoals.includes(JSON.stringify([a,b])) && !jgoals.includes(JSON.stringify([b,a]))){
+			his.solved[goal].push([a,b])
+		}
+		$('#res').append('<li>'+"found " + a + " and " + b + ", with total " + his.failed[goal].length + " tries"+'</li>')
+	}else{
+		his.failed[goal].push([a,b]) 
+		trys(goal,max,again)
+	}
+}
+
+
+</script>
+</html>
